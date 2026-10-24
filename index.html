@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SINSAMER CRAFT (ศิลป์เสมอ คราฟต์) - Official Website</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Prompt & Press Start 2P -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        mc: {
+                            green: '#55FF55',
+                            gold: '#FFAA00',
+                            red: '#FF5555',
+                            aqua: '#55FFFF',
+                            purple: '#AA00AA',
+                            dark: '#0f0c1b',
+                            card: '#161127',
+                            border: '#332352'
+                        }
+                    },
+                    fontFamily: {
+                        prompt: ['Prompt', 'sans-serif'],
+                        pixel: ['"Press Start 2P"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #0d0818;
+            color: #f3f4f6;
+            background-image: radial-gradient(#2d1754 1.2px, transparent 1.2px);
+            background-size: 28px 28px;
+        }
+
+        .pixel-card {
+            background-color: rgba(22, 17, 39, 0.9);
+            border: 2px solid #3d2668;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        .pixel-btn {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px 0 #000000;
+        }
+        .pixel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #000000;
+        }
+        .pixel-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000000;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0818;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6b21a8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- AUTHENTICATION GATE OVERLAY (LOGIN / REGISTER) -->
+    <div id="authGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-lg p-4">
+        <div class="pixel-card max-w-md w-full p-6 sm:p-8 rounded-2xl border-purple-500 shadow-2xl relative text-center">
+            
+            <!-- Logo Icon -->
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-700 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border-2 border-purple-300 shadow-lg text-3xl text-amber-300">
+                <i class="fa-solid fa-cube animate-bounce"></i>
+            </div>
+            <h1 class="font-pixel text-lg text-mc-gold tracking-wider mb-1">SINSAMER CRAFT</h1>
+            <p class="text-xs text-purple-300 mb-6">นครศิลป์เสมอ คราฟต์ - กรุณาเข้าสู่ระบบก่อนเข้าชมเว็บไซต์</p>
+
+            <!-- Login / Register Tab Switcher -->
+            <div class="flex bg-black/50 p-1 rounded-xl mb-6 border border-purple-800">
+                <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-xs font-bold transition bg-purple-600 text-white">
+                    <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
+                </button>
+                <button type="button" id="tabRegBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-user-plus mr-1"></i> สมัครสมาชิกใหม่
+                </button>
+            </div>
+
+            <!-- Pre-defined Admin Helper Box -->
+            <div class="bg-purple-950/70 border border-purple-700/60 rounded-xl p-3 mb-6 text-left text-xs space-y-1">
+                <div class="text-amber-400 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-key"></i> บัญชีผู้ใช้ทดสอบระบบ (Default Admin Account):
+                </div>
+                <div class="text-gray-300 font-mono text-[11px] pt-1">
+                    • ชื่อผู้ใช้: <span class="text-mc-green font-bold select-all">CraftPlayer</span><br>
+                    • รหัสผ่าน: <span class="text-mc-green font-bold select-all">SinsamerCraft@2026!</span>
+                </div>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ชื่อผู้ใช้ในเกม (Username)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="loginUsername" required placeholder="กรอกชื่อผู้ใช้ในเกม..." class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">รหัสผ่าน (Password)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="loginPassword" required placeholder="กรอกรหัสผ่านปลอดภัย..." class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    </div>
+                </div>
+                <div id="loginError" class="text-mc-red text-xs hidden flex items-center gap-1">
+                    <i class="fa-solid fa-circle-exclamation"></i> <span>ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!</span>
+                </div>
+                <button type="submit" class="pixel-btn w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> ยืนยันเข้าสู่ระบบ
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 text-left hidden">
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ตั้งชื่อผู้ใช้ในเกม (Username)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400"><i class="fa-solid fa-user-plus"></i></span>
+                        <input type="text" id="regUsername" required placeholder="เช่น Probably1256" class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ตั้งรหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400"><i class="fa-solid fa-shield-halved"></i></span>
+                        <input type="password" id="regPassword" required minlength="6" placeholder="กรอกรหัสผ่านปลอดภัย..." class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ยืนยันรหัสผ่านอีกครั้ง</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400"><i class="fa-solid fa-check-double"></i></span>
+                        <input type="password" id="regPasswordConfirm" required minlength="6" placeholder="กรอกรหัสผ่านอีกครั้ง..." class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    </div>
+                </div>
+                <div id="regError" class="text-mc-red text-xs hidden flex items-center gap-1">
+                    <i class="fa-solid fa-circle-exclamation"></i> <span id="regErrorMsg">ข้อมูลไม่ถูกต้อง!</span>
+                </div>
+                <button type="submit" class="pixel-btn w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-check"></i> สมัครสมาชิกและบันทึกบัญชี
+                </button>
+            </form>
+
+            <p class="text-[11px] text-gray-500 mt-6">SINSAMER CRAFT &copy; Secure Authentication Portal</p>
+        </div>
+    </div>
+
+    <!-- MAIN WEB CONTENT (Hidden until login) -->
+    <div id="mainContent" class="hidden min-h-screen flex flex-col">
+
+        <!-- HEADER / NAVIGATION BAR -->
+        <header class="sticky top-0 z-40 bg-mc-card/95 backdrop-blur-md border-b border-purple-800 shadow-xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    
+                    <!-- Server Brand -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 bg-gradient-to-br from-purple-600 to-pink-500 rounded-xl flex items-center justify-center text-amber-300 text-2xl shadow-md border border-purple-300">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <div>
+                            <span class="font-pixel text-xs sm:text-base text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-400 to-amber-300 block">SINSAMER CRAFT</span>
+                            <span class="text-[11px] text-purple-300">นครศิลป์เสมอ คราฟต์</span>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <nav class="hidden lg:flex items-center space-x-2 text-xs font-medium">
+                        <button onclick="switchTab('home')" id="tab-home" class="nav-btn px-3 py-2 rounded-lg text-mc-green bg-purple-900/50 border border-purple-700 hover:text-white transition flex items-center gap-1.5"><i class="fa-solid fa-house"></i> หน้าหลัก</button>
+                        <button onclick="switchTab('locations')" id="tab-locations" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-mc-green hover:bg-purple-900/30 transition flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot"></i> สถานที่ (1-29)</button>
+                        <button onclick="switchTab('team')" id="tab-team" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-mc-green hover:bg-purple-900/30 transition flex items-center gap-1.5"><i class="fa-solid fa-users"></i> ทีมผู้พัฒนา</button>
+                        <button onclick="switchTab('townhall')" id="tab-townhall" class="nav-btn px-3 py-2 rounded-lg text-gray-300 hover:text-mc-green hover:bg-purple-900/30 transition flex items-center gap-1.5"><i class="fa-solid fa-landmark"></i> ศาลากลาง</button>
+                        <button onclick="switchTab('shop')" id="tab-shop" class="nav-btn px-3 py-2 rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5 font-bold"><i class="fa-solid fa-store"></i> เติมเงิน & ร้านค้า</button>
+                    </nav>
+
+                    <!-- Logged-in User Profile & Logout -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-purple-950/80 border border-purple-700/70 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-user text-mc-green text-lg"></i>
+                            <div class="text-left leading-tight hidden sm:block">
+                                <span class="text-[10px] text-gray-400 block">ผู้ใช้ที่ล็อกอิน</span>
+                                <span id="currentUserDisplay" class="text-xs font-bold text-amber-300 font-mono">User</span>
+                            </div>
+                            <button onclick="handleLogout()" class="ml-2 text-xs text-mc-red hover:text-white bg-red-950/60 p-1.5 rounded-lg border border-red-800/60 transition" title="ออกจากระบบ">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+
+                        <!-- Mobile Menu Toggle -->
+                        <button onclick="toggleMobileMenu()" class="lg:hidden text-purple-300 hover:text-white p-2 rounded-xl bg-purple-900/40 border border-purple-700">
+                            <i class="fa-solid fa-bars text-xl"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Drawer -->
+            <div id="mobileMenu" class="hidden lg:hidden bg-mc-card border-b border-purple-800 px-4 pt-2 pb-4 space-y-2 text-sm">
+                <button onclick="switchTab('home'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-900/50"><i class="fa-solid fa-house mr-2 text-mc-green"></i> หน้าหลัก</button>
+                <button onclick="switchTab('locations'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-900/50"><i class="fa-solid fa-map-location-dot mr-2 text-pink-400"></i> สถานที่ในเมือง (1-29)</button>
+                <button onclick="switchTab('team'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-900/50"><i class="fa-solid fa-users mr-2 text-purple-400"></i> ทีมผู้พัฒนาเมือง</button>
+                <button onclick="switchTab('townhall'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-gray-200 hover:bg-purple-900/50"><i class="fa-solid fa-landmark mr-2 text-amber-400"></i> ศาลากลางนครศิลป์เสมอ</button>
+                <button onclick="switchTab('shop'); toggleMobileMenu();" class="w-full text-left px-3 py-2 rounded-lg text-amber-300 bg-amber-500/10 border border-amber-500/30"><i class="fa-solid fa-store mr-2 text-amber-400"></i> เติมเงิน & ร้านค้าไอเทม</button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT ROUTING CONTAINER -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+            <!-- PAGE 1: HOME -->
+            <section id="page-home" class="space-y-8">
+                <!-- Hero Banner -->
+                <div class="relative overflow-hidden rounded-2xl pixel-card bg-gradient-to-r from-purple-950 via-mc-card to-purple-900 p-6 sm:p-12 border-purple-600/80 text-center sm:text-left flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="space-y-4 max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-mc-green text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-mc-green animate-pulse"></span> ONLINE SERVER 24/7
+                        </div>
+                        <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+                            ยินดีต้อนรับสู่ <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-mc-gold font-pixel text-2xl sm:text-4xl">SINSAMER CRAFT</span>
+                        </h1>
+                        <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                            ท่องโลกมายคราฟสุดตระการตา ครบครันด้วยสถานที่สำคัญ 29 แห่ง สวนสัตว์ ร้านแมว คฤหาสน์แวมไพร์ ศาลากลาง และระบบดวงวิญญาณฮาโลวีนสุดแรร์!
+                        </p>
+                        
+                        <!-- Server IP & Info -->
+                        <div class="flex flex-wrap gap-3 justify-center sm:justify-start pt-2">
+                            <div class="bg-black/70 border border-purple-500/50 rounded-xl px-4 py-2 flex items-center gap-3">
+                                <i class="fa-solid fa-server text-purple-400 text-lg"></i>
+                                <div class="text-left">
+                                    <p class="text-[10px] text-gray-400 uppercase">Server IP (Bedrock / Java)</p>
+                                    <p class="text-xs font-mono font-bold text-mc-green select-all">play.sinsamercraft.net</p>
+                                </div>
+                                <button onclick="copyIP()" class="ml-2 text-xs text-purple-300 hover:text-white bg-purple-900/60 p-1.5 rounded-lg border border-purple-700" title="คัดลอก IP"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                            <div class="bg-black/70 border border-purple-500/50 rounded-xl px-4 py-2 flex items-center gap-3">
+                                <i class="fa-solid fa-code-branch text-pink-400 text-lg"></i>
+                                <div class="text-left">
+                                    <p class="text-[10px] text-gray-400 uppercase">Version</p>
+                                    <p class="text-xs font-mono font-bold text-mc-gold">1.20.x Support All</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex flex-wrap gap-4 justify-center sm:justify-start">
+                            <button onclick="switchTab('locations')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-compass text-mc-green"></i> สำรวจสถานที่ในเมือง (1-29)
+                            </button>
+                            <button onclick="switchTab('shop')" class="pixel-btn bg-mc-gold hover:bg-amber-400 text-black px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-coins"></i> เติมเงิน / ซื้อไอเทม
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Graphic Feature -->
+                    <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center">
+                        <div class="absolute inset-0 bg-pink-500/20 rounded-full blur-2xl animate-pulse"></div>
+                        <div class="w-full h-full border-2 border-purple-400/80 rounded-2xl bg-purple-950/80 flex flex-col items-center justify-center p-4 text-center shadow-2xl relative z-10">
+                            <i class="fa-solid fa-ghost text-6xl text-pink-400 mb-3 animate-bounce"></i>
+                            <span class="font-pixel text-xs text-mc-gold">HALLOWEEN EVENT</span>
+                            <span class="text-xs text-purple-200 mt-1">สะสม <strong class="text-mc-green">Soul (ดวงวิญญาณ)</strong> แลกของแรร์!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="pixel-card p-6 rounded-2xl border-purple-800 hover:border-purple-500 transition">
+                        <div class="w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center text-purple-300 text-2xl mb-4 border border-purple-700">
+                            <i class="fa-solid fa-city text-mc-green"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">29 สถานที่สำคัญ</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">ครอบคลุมตั้งแต่สวนสัตว์ ร้านขายแมว หอคอย โรงเรียน ศาลากลาง เรือนจำ ไปจนถึงคฤหาสน์แวมไพร์สุดลึกลับ</p>
+                    </div>
+
+                    <div class="pixel-card p-6 rounded-2xl border-purple-800 hover:border-purple-500 transition">
+                        <div class="w-12 h-12 bg-pink-900/50 rounded-xl flex items-center justify-center text-pink-300 text-2xl mb-4 border border-pink-700">
+                            <i class="fa-solid fa-landmark text-mc-gold"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">ระบบศาลากลางยื่นเรื่อง</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">ยื่นคำร้องขอสร้างสิ่งก่อสร้าง หรือรายงานผู้เล่นป่วนบ้านและผู้ใช้โปรแกรมโกง ได้อย่างรวดเร็ว</p>
+                    </div>
+
+                    <div class="pixel-card p-6 rounded-2xl border-purple-800 hover:border-purple-500 transition">
+                        <div class="w-12 h-12 bg-amber-900/50 rounded-xl flex items-center justify-center text-amber-300 text-2xl mb-4 border border-amber-700">
+                            <i class="fa-solid fa-wallet text-orange-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">เติมเงิน TrueMoney Wallet</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">เติมเงินสะดวกผ่านเบอร์วอลเล็ท หรือส่งซองอั่งเปาทรูมันนี่ ปลอดภัย และได้รับไอเทมเข้าตัวทันที</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 2: LOCATIONS DIRECTORY (1-29) -->
+            <section id="page-locations" class="hidden space-y-6">
+                <div class="text-center max-w-3xl mx-auto space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-map-marked-alt text-pink-400"></i> ทำเนียบสถานที่ในเมือง (1 - 29)
+                    </h2>
+                    <p class="text-gray-400 text-xs sm:text-sm">รายละเอียดคู่มือท่องเที่ยวและสถานที่สำคัญประจำเซิร์ฟเวอร์ศิลป์เสมอ คราฟต์</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pb-2">
+                    <button onclick="filterLocations('all')" class="filter-btn px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold transition active">ทั้งหมด (1-29)</button>
+                    <button onclick="filterLocations('zoo')" class="filter-btn px-4 py-2 rounded-xl bg-mc-card border border-purple-800 text-gray-300 text-xs font-bold hover:bg-purple-900 transition">โซนสวนสัตว์ (1-6)</button>
+                    <button onclick="filterLocations('gov')" class="filter-btn px-4 py-2 rounded-xl bg-mc-card border border-purple-800 text-gray-300 text-xs font-bold hover:bg-purple-900 transition">สถานที่เมือง/ราชการ (7-10, 14, 17, 22, 29)</button>
+                    <button onclick="filterLocations('shop')" class="filter-btn px-4 py-2 rounded-xl bg-mc-card border border-purple-800 text-gray-300 text-xs font-bold hover:bg-purple-900 transition">ร้านค้า/บริการ (11, 12, 15, 16, 19, 21, 24)</button>
+                    <button onclick="filterLocations('event')" class="filter-btn px-4 py-2 rounded-xl bg-mc-card border border-purple-800 text-gray-300 text-xs font-bold hover:bg-purple-900 transition">กิจกรรม/ดันเจี้ยน (25-28)</button>
+                </div>
+
+                <!-- Locations Grid -->
+                <div id="locationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- PAGE 3: DEVELOPER TEAM CREDITS -->
+            <section id="page-team" class="hidden space-y-8">
+                <div class="text-center max-w-2xl mx-auto space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-users-gear text-mc-gold"></i> ทีมผู้พัฒนาเมือง (Developer & Builder Team)
+                    </h2>
+                    <p class="text-gray-400 text-xs sm:text-sm">ผู้สร้างสรรค์และวางผังเมือง SINSAMER CRAFT ทั้งหมด</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <!-- Lead Builder -->
+                    <div class="pixel-card border-2 border-amber-500 rounded-2xl p-6 text-center space-y-4 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded-bl-xl font-pixel uppercase">Lead Builder</div>
+                        <div class="w-20 h-20 bg-amber-500/20 rounded-full mx-auto flex items-center justify-center border-2 border-amber-400 text-amber-300 text-3xl">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-amber-300">Probably1256</h3>
+                            <p class="text-xs text-amber-400/80 font-semibold uppercase tracking-wider mt-1">ผู้สร้างหลัก (Lead Builder)</p>
+                        </div>
+                        <p class="text-gray-300 text-xs leading-relaxed">หัวหน้าทีมออกแบบสถาปัตยกรรม วางผังเมืองหลัก ศาลากลาง นครศิลป์เสมอ และระบบโครงสร้างพื้นฐาน</p>
+                    </div>
+
+                    <!-- Co-Builder 1 -->
+                    <div class="pixel-card border border-purple-600 rounded-2xl p-6 text-center space-y-4 shadow-xl">
+                        <div class="w-20 h-20 bg-purple-900/40 rounded-full mx-auto flex items-center justify-center border-2 border-purple-400 text-pink-400 text-3xl">
+                            <i class="fa-solid fa-hammer"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-purple-200">Muyong55</h3>
+                            <p class="text-xs text-purple-400 font-semibold uppercase tracking-wider mt-1">Co-Builder (ผู้สร้างร่วม)</p>
+                        </div>
+                        <p class="text-gray-300 text-xs leading-relaxed">ดูแลการออกแบบโซนสวนสัตว์ ร้านขายแมว ตกแต่งร้านค้า และรายละเอียดภายในตัวเมือง</p>
+                    </div>
+
+                    <!-- Co-Builder 2 -->
+                    <div class="pixel-card border border-purple-600 rounded-2xl p-6 text-center space-y-4 shadow-xl">
+                        <div class="w-20 h-20 bg-purple-900/40 rounded-full mx-auto flex items-center justify-center border-2 border-purple-400 text-pink-400 text-3xl">
+                            <i class="fa-solid fa-drafting-compass"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-purple-200">Cortis009</h3>
+                            <p class="text-xs text-purple-400 font-semibold uppercase tracking-wider mt-1">Co-Builder (ผู้สร้างร่วม)</p>
+                        </div>
+                        <p class="text-gray-300 text-xs leading-relaxed">ผู้เชี่ยวชาญการก่อสร้างโซนฮาโลวีน คฤหาสน์แวมไพร์ ลานปราบมอนสเตอร์ และดันเจี้ยน</p>
+                    </div>
+
+                    <!-- Builder -->
+                    <div class="pixel-card border border-purple-800 rounded-2xl p-6 text-center space-y-4 shadow-xl sm:col-span-2 lg:col-span-3 max-w-md mx-auto w-full">
+                        <div class="w-16 h-16 bg-blue-900/40 rounded-full mx-auto flex items-center justify-center border-2 border-blue-400 text-blue-300 text-2xl">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-blue-200">CadetAbyss10084</h3>
+                            <p class="text-xs text-blue-400 font-semibold uppercase tracking-wider mt-1">Builder (ทีมงานสร้าง)</p>
+                        </div>
+                        <p class="text-gray-300 text-xs leading-relaxed">รับผิดชอบงานสร้างฟาร์มเพาะรักษ์ ฟาร์มกระจกเพาะศิลป์ และงานระบบสนับสนุนทั่วไป</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 4: TOWN HALL FORM -->
+            <section id="page-townhall" class="hidden space-y-6">
+                <div class="text-center max-w-2xl mx-auto space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-landmark text-mc-gold"></i> ศาลากลางนครศิลป์เสมอ (รูปที่ 10)
+                    </h2>
+                    <p class="text-gray-400 text-xs sm:text-sm">ยื่นคำร้องขอสร้างสิ่งก่อสร้าง หรือรายงานผู้เล่นที่ป่วนบ้าน/โกง ต่อทีมงาน</p>
+                </div>
+
+                <div class="max-w-2xl mx-auto pixel-card p-6 sm:p-8 rounded-2xl border-purple-600 shadow-2xl space-y-6">
+                    <form id="townhallForm" onsubmit="submitTownhallForm(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1">ชื่อตัวละครในเกม (Minecraft Username)</label>
+                            <input type="text" id="thInGameName" required placeholder="เช่น Probably1256" class="w-full px-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1">ประเภทเรื่องที่ต้องการยื่นคำร้อง</label>
+                            <select id="thCategory" class="w-full px-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                                <option value="request_build">ขออนุญาตสร้างสิ่งก่อสร้าง / ปลูกสร้างบ้าน</option>
+                                <option value="report_grief">รายงานผู้เล่นป่วนบ้าน / ทำลายสิ่งก่อสร้าง</option>
+                                <option value="report_cheat">รายงานผู้เล่นใช้โปรแกรมโกง / โปรโมด</option>
+                                <option value="suggestion">ข้อเสนอแนะพัฒนาเมือง</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1">พิกัดในเกม หรือสถานที่เกี่ยวข้อง (ถ้ามี)</label>
+                            <input type="text" id="thLocation" placeholder="เช่น X: 105, Y: 64, Z: -350 (ใกล้อนามัยรูปที่ 17)" class="w-full px-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1">รายละเอียดคำร้อง หรือหลักฐานการป่วน/โกง</label>
+                            <textarea id="thDetails" rows="4" required placeholder="อธิบายรายละเอียด คำร้องขอ หรือการกระทำผิดกฎของผู้เล่น..." class="w-full px-4 py-2.5 rounded-lg bg-black/60 border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green"></textarea>
+                        </div>
+
+                        <button type="submit" class="pixel-btn w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> ยื่นคำร้องต่อศาลากลาง
+                        </button>
+                    </form>
+
+                    <!-- Success Feedback Box -->
+                    <div id="thSuccessBox" class="hidden bg-emerald-950/80 border border-emerald-500 text-emerald-200 p-4 rounded-xl text-center space-y-2">
+                        <i class="fa-solid fa-circle-check text-3xl text-mc-green"></i>
+                        <h4 class="font-bold text-sm">ยื่นคำร้องต่อศาลากลางเรียบร้อยแล้ว!</h4>
+                        <p class="text-xs">รหัสอ้างอิงคำร้อง: <span id="thTicketId" class="font-mono text-mc-gold font-bold">#SINSAMER-9921</span></p>
+                        <p class="text-[11px] text-emerald-300/80">ทีมงาน Lead Builder Probably1256 และทีมผู้พัฒนาจะเข้าตรวจสอบโดยเร็วที่สุด</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 5: TOP-UP & ITEM SHOP -->
+            <section id="page-shop" class="hidden space-y-8">
+                <!-- Header -->
+                <div class="text-center max-w-2xl mx-auto space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-store text-mc-gold"></i> ระบบเติมเงิน & ร้านค้าไอเทม
+                    </h2>
+                    <p class="text-gray-400 text-xs sm:text-sm">สั่งซื้อเงิน Money, Soul ฮาโลวีน, ชุดเนเธอไรต์ และแร่แรร์ประจำเซิร์ฟเวอร์</p>
+                </div>
+
+                <!-- TrueMoney Wallet Top-Up Banner -->
+                <div class="bg-gradient-to-r from-orange-950/90 via-mc-card to-purple-950/90 border-2 border-orange-500/80 rounded-2xl p-6 max-w-3xl mx-auto space-y-4 shadow-2xl">
+                    <div class="flex items-center gap-3 border-b border-orange-500/30 pb-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-md">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-orange-400 text-base">ชำระเงินผ่าน TrueMoney Wallet</h3>
+                            <p class="text-xs text-gray-300">โอนผ่านเบอร์วอลเล็ท หรือส่งลิงก์ซองอั่งเปาทรูมันนี่</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-black/60 p-4 rounded-xl border border-orange-500/40 space-y-2">
+                            <span class="text-xs text-gray-400 block">เบอร์ TrueMoney Wallet หลัก:</span>
+                            <div class="flex items-center justify-between bg-orange-950/40 px-3 py-2 rounded-lg border border-orange-700/50">
+                                <span class="font-mono text-lg font-bold text-orange-300 select-all">0923282312</span>
+                                <button onclick="copyWallet('0923282312')" class="text-xs bg-orange-600 hover:bg-orange-500 text-white px-3 py-1 rounded-md font-bold">คัดลอก</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-black/60 p-4 rounded-xl border border-orange-500/40 space-y-2">
+                            <span class="text-xs text-gray-400 block">เติมเงินผ่านซองอั่งเปา TrueMoney Gift:</span>
+                            <div class="flex gap-2">
+                                <input type="text" id="directAngpao" placeholder="https://gift.truemoney.com/..." class="w-full text-xs px-3 py-2 rounded-lg bg-black border border-orange-700 text-white focus:outline-none">
+                                <button onclick="submitDirectAngpao()" class="text-xs bg-orange-500 hover:bg-orange-400 text-black font-bold px-3 py-2 rounded-lg whitespace-nowrap">ยืนยัน</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shop Items Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- ITEM 1: In-game Money -->
+                    <div class="pixel-card border border-purple-700 rounded-2xl p-5 flex flex-col justify-between hover:border-mc-green transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center text-mc-green text-2xl border border-emerald-600">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                </div>
+                                <span class="bg-emerald-500/20 text-mc-green text-[10px] px-2.5 py-1 rounded-full font-bold">ยอดนิยม</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">เงินในเกม (Money 100,000$)</h3>
+                            <p class="text-gray-400 text-xs">สำหรับซื้อสินค้า ฝากธนาคาร (รูปที่ 29) และซื้อขายแลกเปลี่ยนระหว่างผู้เล่น</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">50 ฿</span>
+                            <button onclick="openBuyModal('เงินในเกม (Money 100,000$)', '50 ฿')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                    <!-- ITEM 2: Halloween Soul Currency -->
+                    <div class="pixel-card border border-pink-700 rounded-2xl p-5 flex flex-col justify-between hover:border-pink-500 transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-pink-900/50 rounded-xl flex items-center justify-center text-pink-400 text-2xl border border-pink-600">
+                                    <i class="fa-solid fa-ghost"></i>
+                                </div>
+                                <span class="bg-pink-500/20 text-pink-300 text-[10px] px-2.5 py-1 rounded-full font-bold">Event Rare</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">ดวงวิญญาณ (Soul x10)</h3>
+                            <p class="text-gray-400 text-xs">ค่าเงินฮาโลวีนพิเศษใช้แลกไอเทมระดับแร์ในระบบ Soul System (รูปที่ 28)</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">90 ฿</span>
+                            <button onclick="openBuyModal('ดวงวิญญาณ Soul x10', '90 ฿')" class="pixel-btn bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                    <!-- ITEM 3: Enchanted Netherite Gear -->
+                    <div class="pixel-card border border-purple-600 rounded-2xl p-5 flex flex-col justify-between hover:border-mc-gold transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center text-mc-gold text-2xl border border-purple-500">
+                                    <i class="fa-solid fa-khanda"></i>
+                                </div>
+                                <span class="bg-amber-500/20 text-mc-gold text-[10px] px-2.5 py-1 rounded-full font-bold">Max Option</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">ดาบ & ขวาน Netherite เทพ</h3>
+                            <p class="text-gray-400 text-xs"> Netherite Sword & Axe ติดเอ็นชาร์จเต็ม Max พร้อมรบในลานมอนสเตอร์</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">150 ฿</span>
+                            <button onclick="openBuyModal('ดาบ & ขวาน Netherite เทพ', '150 ฿')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                    <!-- ITEM 4: Plain Netherite Gear -->
+                    <div class="pixel-card border border-purple-800 rounded-2xl p-5 flex flex-col justify-between hover:border-purple-500 transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-gray-900/80 rounded-xl flex items-center justify-center text-gray-300 text-2xl border border-gray-600">
+                                    <i class="fa-solid fa-shield-cat"></i>
+                                </div>
+                                <span class="bg-gray-500/20 text-gray-300 text-[10px] px-2.5 py-1 rounded-full font-bold">Basic Set</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">เซ็ต Netherite แบบธรรมดา</h3>
+                            <p class="text-gray-400 text-xs">ชุดเกราะ และอาวุธ Netherite แบบปกติ นำไปใส่เอ็นชาร์จออฟชั่นเองได้</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">80 ฿</span>
+                            <button onclick="openBuyModal('เซ็ต Netherite ธรรมดา', '80 ฿')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                    <!-- ITEM 5: Gems Pack (Emerald / Diamond / Gold) -->
+                    <div class="pixel-card border border-emerald-700 rounded-2xl p-5 flex flex-col justify-between hover:border-mc-green transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-emerald-900/40 rounded-xl flex items-center justify-center text-mc-green text-2xl border border-emerald-500">
+                                    <i class="fa-solid fa-gem"></i>
+                                </div>
+                                <span class="bg-emerald-500/20 text-mc-green text-[10px] px-2.5 py-1 rounded-full font-bold">คุ้มสุดๆ</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">แพ็กแร่แรร์ (Emerald + เพชร + ทอง)</h3>
+                            <p class="text-gray-400 text-xs">รับ Emerald 64x, Diamond 64x, Gold Block 32x สำหรับเทรดดิ้งและสร้างเมือง</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">120 ฿</span>
+                            <button onclick="openBuyModal('แพ็กแร่แรร์ (Emerald/เพชร/ทอง)', '120 ฿')" class="pixel-btn bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                    <!-- ITEM 6: VIP Pass -->
+                    <div class="pixel-card border border-amber-600 rounded-2xl p-5 flex flex-col justify-between hover:border-mc-gold transition">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 bg-amber-900/40 rounded-xl flex items-center justify-center text-mc-gold text-2xl border border-amber-500">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <span class="bg-amber-500/20 text-mc-gold text-[10px] px-2.5 py-1 rounded-full font-bold">VIP Rank</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-mc-gold">ยศพิเศษ [SINSAMER VIP]</h3>
+                            <p class="text-gray-400 text-xs">สิทธิ์บินในเมือง, /fly, หมวกแฟชั่น, ช่องเกราะพิเศษ และป้ายชื่อเรืองแสง</p>
+                        </div>
+                        <div class="pt-4 border-t border-purple-800/60 flex justify-between items-center mt-4">
+                            <span class="text-mc-gold font-bold text-lg">300 ฿</span>
+                            <button onclick="openBuyModal('ยศพิเศษ SINSAMER VIP', '300 ฿')" class="pixel-btn bg-mc-gold hover:bg-amber-400 text-black text-xs font-bold px-4 py-2 rounded-lg">สั่งซื้อ</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-mc-card border-t border-purple-800 py-6 mt-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-purple-300 space-y-2">
+                <p class="font-pixel text-[11px] text-pink-400">SINSAMER CRAFT (ศิลป์เสมอ คราฟต์) &copy; 2026</p>
+                <p class="text-gray-400">พัฒนาโดย Lead-Builder: <strong class="text-white">Probably1256</strong> | Co-Builders: <strong class="text-white">Muyong55, Cortis009</strong> | Builder: <strong class="text-white">CadetAbyss10084</strong></p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ORDER CHECKOUT MODAL -->
+    <div id="buyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="pixel-card border-2 border-purple-500 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeBuyModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-bold text-lg text-mc-gold flex items-center gap-2"><i class="fa-solid fa-cart-shopping"></i> ยืนยันการสั่งซื้อไอเทม</h3>
+            
+            <div class="bg-black/60 p-3 rounded-xl border border-purple-700/60 space-y-1">
+                <p id="modalItemName" class="text-white font-bold text-sm"></p>
+                <p id="modalItemPrice" class="text-mc-gold font-bold text-xs"></p>
+            </div>
+
+            <form onsubmit="handleConfirmPurchase(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ชื่อตัวละครในเกม (In-Game Username) <span class="text-mc-red">*</span></label>
+                    <input type="text" id="buyInGameName" required placeholder="กรอกชื่อตัวละครในเกม..." class="w-full px-3 py-2 rounded-lg bg-black border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                    <p class="text-[10px] text-purple-300 mt-1">* ไอเทมจะถูกส่งไปยังตัวละครชื่อนี้</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-purple-200 mb-1">ลิงก์ซองอั่งเปา TrueMoney Wallet <span class="text-mc-red">*</span></label>
+                    <input type="text" id="buyAngpaoLink" required placeholder="https://gift.truemoney.com/..." class="w-full px-3 py-2 rounded-lg bg-black border border-purple-600 text-white text-sm focus:outline-none focus:border-mc-green">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="pixel-btn w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> ยืนยันการเติมเงินสั่งซื้อ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-purple-950 border-2 border-purple-500 text-white px-4 py-3 rounded-xl shadow-2xl hidden flex items-center gap-3 text-xs font-semibold">
+        <i class="fa-solid fa-circle-info text-mc-green text-lg"></i>
+        <span id="toastMsg">แจ้งเตือน</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Pre-defined Accounts Database (In memory + localStorage)
+        const DEFAULT_ADMIN = { username: 'CraftPlayer', password: 'SinsamerCraft@2026!' };
+
+        // Town Locations Database (1-29)
+        const locationsData = [
+            { id: 1, title: 'โซนสวนสัตว์ (Zoo Zone 1)', cat: 'zoo', icon: 'fa-hippo', desc: 'สวนสัตว์ประจำเมืองสำหรับเข้าชมสัตว์หลากชนิด สัมผัสธรรมชาติ' },
+            { id: 2, title: 'โซนสวนสัตว์ (Zoo Zone 2)', cat: 'zoo', icon: 'fa-otter', desc: 'พื้นที่กรงสัตว์ป่าและมุมพักผ่อนหย่อนใจในสวนสัตว์' },
+            { id: 3, title: 'โซนสวนสัตว์ (Zoo Zone 3)', cat: 'zoo', icon: 'fa-feather', desc: 'โซนจัดแสดงสัตว์ปีก นกสวยงาม และสัตว์เขตร้อน' },
+            { id: 4, title: 'ร้านขายแมว (Cat Shop)', cat: 'zoo', icon: 'fa-cat', desc: 'โซนรับเลี้ยงและขายแมวหลากสายพันธุ์ สามารถซื้อนำกลับไปเลี้ยงที่บ้านได้' },
+            { id: 5, title: 'โซนสวนสัตว์ & สัตว์แปลก 1', cat: 'zoo', icon: 'fa-dragon', desc: 'โซนจัดแสดงสัตว์แรร์และสัตว์ประหลาดหาชมยากประจำเมือง' },
+            { id: 6, title: 'โซนสวนสัตว์ & สัตว์แปลก 2', cat: 'zoo', icon: 'fa-frog', desc: 'พื้นที่จัดแสดงสัตว์ครึ่งบกครึ่งน้ำและกรงสัตว์พิเศษ' },
+            { id: 7, title: 'หอคอยเมือง (City Tower)', cat: 'gov', icon: 'fa-gopuram', desc: 'หอคอยชมวิวเมืองในมุมสูง สามารถมองเห็นทัศนียภาพรอบเมืองศิลป์เสนอ' },
+            { id: 8, title: 'สถานีรถไฟศิลป์ศิรินะ', cat: 'gov', icon: 'fa-train-subway', desc: 'ระบบขนส่งมวลชนรถไฟเชื่อมต่อระหว่างโซนต่างๆ ในนครศิลป์เสนอ' },
+            { id: 9, title: 'โรงเรียนศิลป์เสมอ', cat: 'gov', icon: 'fa-school', desc: 'สถานศึกษาประจำนคร ศูนย์รวมการเรียนรู้และกิจกรรมผู้เล่น' },
+            { id: 10, title: 'ศาลากลางนครศิลป์เสมอ', cat: 'gov', icon: 'fa-landmark', desc: 'ศูนย์กลางเมือง สำหรับยื่นคำร้องขอสร้างสิ่งก่อสร้าง หรือรายงานผู้เล่นป่วนบ้าน/โกง' },
+            { id: 11, title: 'ร้านดอกไม้ (Flower Shop)', cat: 'shop', icon: 'fa-spa', desc: 'ร้านขายดอกไม้ประดับและต้นไม้นานาพันธุ์ ตกแต่งด้วยซุ้มผ้าใบสดใส' },
+            { id: 12, title: 'คาเฟ่หนังสือ (Book Cafe)', cat: 'shop', icon: 'fa-book-open-reader', desc: 'คาเฟ่ไม้บรรยากาศอบอุ่นริมต้นซากุระ สำหรับนั่งพักผ่อนและอ่านหนังสือ' },
+            { id: 13, title: 'เหมืองขุดแร่ (Public Mine)', cat: 'gov', icon: 'fa-pickaxe', desc: 'เหมืองแร่สาธารณะเข้าได้ทุกคน พร้อมตู้เก็บของและอุปกรณ์อำนวยความสะดวก' },
+            { id: 14, title: 'เขื่อนเก็บน้ำ (City Dam)', cat: 'gov', icon: 'fa-water', desc: 'เขื่อนกักเก็บน้ำขนาดใหญ่ มุมมอง Top-view สวยงามสบายตา' },
+            { id: 15, title: 'ร้านขายเสื้อผ้า (Luck Cloth)', cat: 'shop', icon: 'fa-shirt', desc: 'ร้านขายสกินแฟชั่น เสื้อผ้า และชุดเกราะแฟชั่นประดับตัวละคร' },
+            { id: 16, title: 'เซเว่น (Nine Eleven)', cat: 'shop', icon: 'fa-store', desc: 'ร้านสะดวกซื้อ 24 ชม. มีตู้ ATM ตู้กดน้ำ และเคาน์เตอร์สินค้าครบครัน' },
+            { id: 17, title: 'อนามัยศิลป์เสมอ คราฟต์', cat: 'gov', icon: 'fa-hospital-user', desc: 'จุดบริการปฐมพยาบาลและรักษาสุขภาพของผู้เล่นในเมือง' },
+            { id: 18, title: 'ป้ายชื่อเมือง SINSAMER / รายชื่อต้อนรับ', cat: 'gov', icon: 'fa-sign-hanging', desc: 'จุดเช็คอินต้อนรับผู้เล่น และจุดโชว์รายชื่อทีมผู้พัฒนาเมือง' },
+            { id: 19, title: 'ฟาร์มเพาะรักษ์ (Love Farm)', cat: 'shop', icon: 'fa-house-chimney-window', desc: 'บ้านพักสไตล์โมเดิร์น สระว่ายน้ำ และแปลงเกษตรลอยฟ้าชั้นสอง' },
+            { id: 20, title: 'ระบบแลกเปลี่ยน & เครดิตผู้สร้าง', cat: 'gov', icon: 'fa-coins', desc: 'ตู้บริการแลกเปลี่ยนเงิน/เอเมอรัลด์ และเครดิต Builder' },
+            { id: 21, title: 'สุขาห้องน้ำชายสาธารณะ', cat: 'shop', icon: 'fa-restroom', desc: 'จุดบริการห้องน้ำสาธารณะเรียบหรู พร้อมอ่างล้างมือประดับไผ่กวนอิม' },
+            { id: 22, title: 'เรือนจำ (City Prison)', cat: 'gov', icon: 'fa-dungeon', desc: 'สถานที่คุมขังผู้ทำผิดกฎเซิร์ฟเวอร์ มีโถงอาหารและกรงขังหนาแน่น' },
+            { id: 23, title: 'ป้ายชื่อเมือง SINSAMER CRAFT', cat: 'gov', icon: 'fa-monument', desc: 'แลนด์มาร์กต้อนรับเข้าสู่เมือง ประดับด้วยต้นซากุระสวยงาม' },
+            { id: 24, title: 'ฟาร์มเพาะศิลป์ (ฟาร์มกระจก)', cat: 'shop', icon: 'fa-wheat-awn', desc: 'โดมกระจกฟาร์มเกษตรครบวงจร ข้าวสาลี ฟักทอง และรังผึ้ง' },
+            { id: 25, title: 'ลานปราบมอนสเตอร์', cat: 'event', icon: 'fa-skull', desc: 'ลานประลองสู้รบ ประดับด้วยหัวฟักทอง สำหรับฟาร์มเลเวลและไอเทม' },
+            { id: 26, title: 'คฤหาสน์แวมไพร์', cat: 'event', icon: 'fa-spaghetti-monster-flying', desc: 'อาคารสไตล์กอธิคลึกลับ ล้อมรอบด้วยสวนดอกไม้และรั้วเหล็ก' },
+            { id: 27, title: 'ภารกิจรับเควสฮาโลวีน (Quest Hub)', cat: 'event', icon: 'fa-clipboard-list', desc: 'จุดรับเควสประจำเทศกาลฮาโลวีน สะสมแต้มรับรางวัลพิเศษ' },
+            { id: 28, title: 'ระบบดวงวิญญาณ (Soul System)', cat: 'event', icon: 'fa-ghost', desc: 'ค่าเงินพิเศษประจำเทศกาลฮาโลวีน สำหรับแลกซื้อไอเทมแรร์' },
+            { id: 29, title: 'ธนาคาร (BANK)', cat: 'gov', icon: 'fa-building-columns', desc: 'อาคารธนาคารใหญ่ใจกลางเมือง สำหรับทำธุรกรรมและฝาก-ถอนเงิน' }
+        ];
+
+        // State Management
+        let loggedInUser = null;
+
+        // Initialize App on Load
+        window.onload = function() {
+            checkSavedSession();
+        };
+
+        // Get Registered Users from LocalStorage
+        function getStoredUsers() {
+            const users = localStorage.getItem('sinsamer_users');
+            return users ? JSON.parse(users) : [DEFAULT_ADMIN];
+        }
+
+        // Check Active Session
+        function checkSavedSession() {
+            const activeUser = localStorage.getItem('sinsamer_active_user');
+            if (activeUser) {
+                loggedInUser = activeUser;
+                showMainSite();
+            }
+        }
+
+        // Switch Auth Form Tabs (Login / Register)
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('tabLoginBtn');
+            const regBtn = document.getElementById('tabRegBtn');
+
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('regError').classList.add('hidden');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                loginBtn.className = "flex-1 py-2 rounded-lg text-xs font-bold transition bg-purple-600 text-white";
+                regBtn.className = "flex-1 py-2 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white";
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                regBtn.className = "flex-1 py-2 rounded-lg text-xs font-bold transition bg-purple-600 text-white";
+                loginBtn.className = "flex-1 py-2 rounded-lg text-xs font-bold transition text-gray-400 hover:text-white";
+            }
+        }
+
+        // Handle Login Submission
+        function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('loginUsername').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value.trim();
+            const errorBox = document.getElementById('loginError');
+
+            const users = getStoredUsers();
+            const foundUser = users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.password === passwordInput);
+
+            if (foundUser) {
+                errorBox.classList.add('hidden');
+                loggedInUser = foundUser.username;
+                localStorage.setItem('sinsamer_active_user', loggedInUser);
+                showMainSite();
+                showToast(`ยินดีต้อนรับกลับมา,คุณ ${loggedInUser}!`);
+            } else {
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        // Handle Registration Submission
+        function handleRegister(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('regUsername').value.trim();
+            const passwordInput = document.getElementById('regPassword').value.trim();
+            const passwordConfirmInput = document.getElementById('regPasswordConfirm').value.trim();
+            const errorBox = document.getElementById('regError');
+            const errorMsg = document.getElementById('regErrorMsg');
+
+            if (passwordInput !== passwordConfirmInput) {
+                errorMsg.innerText = "รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน!";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            const users = getStoredUsers();
+            if (users.some(u => u.username.toLowerCase() === usernameInput.toLowerCase())) {
+                errorMsg.innerText = "ชื่อผู้ใช้นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่ออื่น!";
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            // Save new user
+            users.push({ username: usernameInput, password: passwordInput });
+            localStorage.setItem('sinsamer_users', JSON.stringify(users));
+
+            // Log in newly registered user
+            loggedInUser = usernameInput;
+            localStorage.setItem('sinsamer_active_user', loggedInUser);
+            showMainSite();
+            showToast(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${loggedInUser}`);
+        }
+
+        // Handle Logout
+        function handleLogout() {
+            localStorage.removeItem('sinsamer_active_user');
+            loggedInUser = null;
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('authGate').classList.remove('hidden');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            showToast('ออกจากระบบเรียบร้อยแล้ว');
+        }
+
+        // Display Main Site
+        function showMainSite() {
+            document.getElementById('authGate').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('currentUserDisplay').innerText = loggedInUser;
+            
+            // Auto-fill forms with logged-in user
+            document.getElementById('thInGameName').value = loggedInUser;
+            document.getElementById('buyInGameName').value = loggedInUser;
+
+            renderLocations('all');
+        }
+
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            const pages = ['home', 'locations', 'team', 'townhall', 'shop'];
+            pages.forEach(p => {
+                document.getElementById(`page-${p}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-${p}`);
+                if (btn) {
+                    btn.classList.remove('text-mc-green', 'bg-purple-900/50');
+                    btn.classList.add('text-gray-300');
+                }
+            });
+
+            document.getElementById(`page-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('text-mc-green', 'bg-purple-900/50');
+            }
+
+            if (tabId === 'locations') {
+                renderLocations('all');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        // Render Locations Cards
+        function renderLocations(filterCategory) {
+            const grid = document.getElementById('locationsGrid');
+            grid.innerHTML = '';
+
+            const filtered = filterCategory === 'all' 
+                ? locationsData 
+                : locationsData.filter(loc => loc.cat === filterCategory);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "pixel-card border border-purple-800 rounded-2xl p-5 hover:border-pink-500 transition space-y-3 flex flex-col justify-between shadow-xl";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="w-8 h-8 rounded-full bg-purple-900/80 border border-purple-500 text-pink-400 text-xs font-mono font-bold flex items-center justify-center">#${item.id}</span>
+                            <div class="w-10 h-10 rounded-xl bg-purple-950 flex items-center justify-center text-mc-gold text-xl border border-purple-700">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-white text-base">${item.title}</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed">${item.desc}</p>
+                    </div>
+                    <div class="pt-3 border-t border-purple-900/80 flex justify-between items-center text-[11px] text-purple-300">
+                        <span><i class="fa-solid fa-location-dot text-pink-400 mr-1"></i> รูปที่ ${item.id}</span>
+                        <span class="bg-purple-900/50 px-2 py-0.5 rounded text-purple-200">SINSAMER CITY</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterLocations(cat) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-mc-card', 'text-gray-300');
+            });
+            event.target.classList.remove('bg-mc-card', 'text-gray-300');
+            event.target.classList.add('bg-purple-600', 'text-white');
+            renderLocations(cat);
+        }
+
+        // Copy Clipboard Helpers
+        function copyIP() {
+            navigator.clipboard.writeText('play.sinsamercraft.net');
+            showToast('คัดลอก IP Server เรียบร้อยแล้ว!');
+        }
+
+        function copyWallet(num) {
+            navigator.clipboard.writeText(num);
+            showToast('คัดลอกเบอร์ TrueMoney Wallet แล้ว!');
+        }
+
+        // Direct Angpao Submission
+        function submitDirectAngpao() {
+            const link = document.getElementById('directAngpao').value.trim();
+            if (link) {
+                showToast('ส่งลิงก์ซองอั่งเปาเรียบร้อย! ระบบจะตรวจสอบและเพิ่มยอดเงินใน 5 นาที');
+                document.getElementById('directAngpao').value = '';
+            } else {
+                showToast('กรุณากรอกลิงก์ซองอั่งเปา TrueMoney Wallet');
+            }
+        }
+
+        // Submit Town Hall Form
+        function submitTownhallForm(e) {
+            e.preventDefault();
+            const username = document.getElementById('thInGameName').value.trim();
+            const ticket = '#SINSAMER-' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('thTicketId').innerText = ticket;
+            document.getElementById('thSuccessBox').classList.remove('hidden');
+            showToast(`ยื่นคำร้องต่อศาลากลางสำเร็จสำหรับผู้เล่น ${username}`);
+        }
+
+        // Order Modal Logic
+        let selectedItemName = '';
+        let selectedItemPrice = '';
+
+        function openBuyModal(itemName, itemPrice) {
+            selectedItemName = itemName;
+            selectedItemPrice = itemPrice;
+            document.getElementById('modalItemName').innerText = itemName;
+            document.getElementById('modalItemPrice').innerText = 'ราคาชำระ: ' + itemPrice;
+            document.getElementById('buyInGameName').value = loggedInUser || '';
+            document.getElementById('buyModal').classList.remove('hidden');
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buyModal').classList.add('hidden');
+        }
+
+        function handleConfirmPurchase(e) {
+            e.preventDefault();
+            const ign = document.getElementById('buyInGameName').value.trim();
+            const angpao = document.getElementById('buyAngpaoLink').value.trim();
+
+            if (!ign) {
+                showToast('กรุณาระบุชื่อตัวละครในเกม');
+                return;
+            }
+            if (!angpao) {
+                showToast('กรุณากรอกลิงก์ซองอั่งเปาทรูมันนี่');
+                return;
+            }
+
+            closeBuyModal();
+            showToast(`ทำรายการสั่งซื้อ ${selectedItemName} สำเร็จ! ส่งของเข้าตัวละคร ${ign}`);
+            document.getElementById('buyAngpaoLink').value = '';
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
